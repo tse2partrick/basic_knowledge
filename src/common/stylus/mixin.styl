@@ -1,0 +1,54 @@
+// 背景图片
+bg-image($url)
+  background-image: url($url + "@2x.png")
+  @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3)
+    background-image: url($url + "@3x.png")
+
+// 不换行
+no-wrap()
+  text-overflow: ellipsis
+  overflow: hidden
+  white-space: nowrap
+
+// 扩展点击区域
+extend-click()
+  position: relative
+  &:before
+    content: ''
+    position: absolute
+    top: -10px
+    left: -10px
+    right: -10px
+    bottom: -10px
+
+
+// 正方形斜切角
+bevel-square($px, $color)
+  background: $color
+  background: linear-gradient(135deg, transparent $px, $color 0px) top left,
+              linear-gradient(-135deg, transparent $px, $color 0) top right,
+              linear-gradient(45deg, transparent $px, $color 0) bottom left,
+              linear-gradient(-45deg, transparent $px, $color 0) bottom right
+  background-size: 50% 50%
+  background-repeat: no-repeat
+
+// VIP形状
+vip-square($px, $color)
+  background: $color
+  background: linear-gradient(135deg, transparent $px - 7px, $color 0) top left,
+              linear-gradient(-135deg, transparent $px, transparent 0) bottom left,
+              linear-gradient(-45deg, transparent $px + 14px, $color 0) bottom right,
+              linear-gradient(45deg, transparent $px, transparent 0) top right
+  background-size: 50% 100%
+  background-repeat: no-repeat
+  
+
+// 向右箭头
+right-arrow($px, $color)
+  background: $color
+  background: linear-gradient(135deg, $color $px, $color 0px) top left,
+              linear-gradient(-135deg, transparent $px + 15px, $color 0) top right,
+              linear-gradient(45deg, $color $px, $color 0) bottom left,
+              linear-gradient(-45deg, transparent $px + 15px, $color 0) bottom right;
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
