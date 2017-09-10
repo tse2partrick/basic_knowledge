@@ -4,32 +4,78 @@
     <player-background :bg="bg"></player-background>
     <player-char :char="char"></player-char>
     <div class="left-container">
-      <div class="player-info">
-        <div class="avatar-box">
-          <div class="vip-box">
-            <span class="vip">VIP&nbsp;&nbsp;{{vLevel}}</span>
-          </div>
-          <div class="avatar">
-            <div class="virid-bevel">
-            <div class="black-bevel">
-               <img class="avatar-img" width="100%" height="100%" :src="getAvatar" alt="" /> 
-            </div>
-            </div>
-          </div>
+      <player-info class="playerInfo" :name="playerName" :level="playerLevel" :vip-level="vipLevel" />
+      <div class="activities">
+        <div class="activity">
+          <img width="100%" height="100%" src="~assets/treasures/treasure1.gif" alt="">
         </div>
-        <div class="name-box">
-          <div class="black-right-arrow">
-            <div class="name-right-arrow">
-              <div class="name">
-                <div class="nickname">一根牙签一枝桠</div>
-                <div class="level">100</div>
-              </div>
-            </div>
-          </div>
+      </div>
+      <div class="message" ref="message">
+        <div class="msg-box" ref="msgBox"></div>
+        <div class="img-box" ref="imgBox">
+          <div v-show="notReadMsg" class="not-read-msg">{{notReadMsg}}</div>
+          <img class="msg-off" v-show="!msgOpen" src="~assets/routers/message-in.png" alt="" @click="toggleMsg" />
+          <img class="msg-on" v-show="msgOpen" src="~assets/routers/message-out.png" alt="" @click="toggleMsg" />  
+        </div>
+      </div>
+      <div class="role">
+        <img width="100%" height="100%" src="~assets/routers/role12.png" alt="" />
+      </div>
+    </div>
+    <div class="right-container">
+      <div class="money-box">
+        <div class="gold" ref="gold">
+          <div class="gold-num">{{serialize(gold)}}</div>
+          <img width="70%" height="70%" src="~assets/money/gold.png" alt="" />
+        </div>
+        <div class="diamond" ref="diamond">
+          <div class="diamond-num">{{serialize(diamond)}}</div>
+          <img width="70%" height="70%" src="~assets/money/diamond.png" alt="" />
+        </div>
+      </div>
+      <div class="function-1-box">
+        <div class="mission">
+          <img src="~assets/routers/mission.png" width="100%" height="100%"  alt="" />
+        </div>
+        <div class="all-card">
+          <img src="~assets/routers/all-card.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="rank">
+          <img src="~assets/routers/rank.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="email">
+          <img src="~assets/routers/email.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="sign-in">
+          <img src="~assets/routers/sign-in.png" width="100%" height="100%" alt="" />
+        </div>
+      </div>
+      <div class="function-2-box">
+        <div class="my-card">
+          <img src="~assets/routers/my-card.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="shop">
+          <img src="~assets/routers/shop.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="fight">
+          <img src="~assets/routers/fight.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="store">
+          <img src="~assets/routers/store.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="skin-shop">
+          <img src="~assets/routers/skin-shop.png" width="100%" height="100%" alt="" />
+        </div>
+        <div class="team">
+          <img src="~assets/routers/team.png" width="100%" height="100%" alt="" />
+        </div>
+      </div>
+      <div class="function-3-box">
+        <div class="travel">
+          <img src="~assets/routers/travel2.png" width="100%" height="100%" alt="" />
         </div>
       </div>
     </div>
-    <div class="right-container"></div>
   </div>
 </template>
 
@@ -37,27 +83,33 @@
   import {isMobile} from 'common/js/util'
   import PlayerBackground from 'base/player-background/player-background'
   import PlayerChar from 'base/player-char/player-char'
-  import youxi1 from '../../assets/avatar/youxi1.png'
+  import PlayerInfo from 'base/player-info/player-info'
 
   export default {
     data() {
       return {
         bg: 'space',
         char: 'youxi',
-        vLevel: 1
+        vLevel: 10,
+        msgOpen: false,
+        notReadMsg: 20,
+        playerName: '一根牙签',
+        playerLevel: 100,
+        vipLevel: 1,
+        gold: 299999,
+        diamond: 299999
       }
     },
     mounted() {
       this.resizePage()
       window.addEventListener('resize', this.resizePage)
+      setTimeout(() => {
+        this._initMsgPos()
+        this._initMoneyPos()
+      }, 20)
     },
     destroyed() {
       window.removeEventListener('resize', this.resizePage)
-    },
-    computed: {
-      getAvatar() {
-        return youxi1
-      }
     },
     methods: {
       resizePage() {
@@ -66,6 +118,7 @@
           clearTimeout(this.timer)
         }
 
+        // 竖屏自动转向横屏
         this.timer = setTimeout(() => {
           let width = document.body.clientWidth
           let height = document.body.clientHeight
@@ -87,11 +140,54 @@
 
           console.log('resize')
         }, 20)
+
+        // 计算消息盒子的位置
+        this._initMsgPos()
+
+        // 计算钱币位置
+        this._initMoneyPos()
+      },
+      toggleMsg() {
+        if (this.notReadMsg) {
+          this.notReadMsg = 0
+        }
+        this.msgOpen = !this.msgOpen
+
+        if (this.msgOpen) {
+          this.$refs.message.style.transform = 'translate3d(0, 0, 0)'
+        } else {
+          this.$refs.message.style.transform = `translate3d(-${this.$refs.msgBox.clientWidth}px, 0, 0)`
+        }
+      },
+      serialize(num) {
+        let ret
+        num = num.toString()
+
+        if (num.length > 8) {
+          ret = (Number(num) / 100000000).toFixed(1)
+          ret += '亿'
+        } else if (num.length > 4) {
+          ret = (Number(num) / 10000).toFixed(1)
+          ret += '万'
+        }
+
+        return ret
+      },
+      _initMsgPos() {
+        this.$refs.message.style.transform = `translate3d(-${this.$refs.msgBox.clientWidth}px, 0, 0)`
+        this.$refs.imgBox.style.left = this.$refs.msgBox.clientWidth + 'px'
+        this.$refs.imgBox.style.top = this.$refs.msgBox.clientHeight / 2 - this.$refs.imgBox.clientHeight / 2 + 'px'
+
+        console.log(this.$refs.msgBox.clientHeight + ' - ' + this.$refs.imgBox.clientHeight)
+      },
+      _initMoneyPos() {
+        // this.$refs.gold.style.right = this.$refs.gold.clientWidth + 'px'
       }
     },
     components: {
       PlayerBackground,
-      PlayerChar
+      PlayerChar,
+      PlayerInfo
     }
   }
 </script>
@@ -111,140 +207,160 @@
       left: 0
       width: 40%
       height: 100%
-      .player-info
-        .avatar-box
-          position: relative
-          display: inline-block
-          left: 10px
-          top: 10px
-          width: 100px
-          height: 100px
-          bevel-square(10px, #999)
-          z-index: 2
-          .vip-box
-            position: absolute
-            display: flex
-            width: 100px
-            height: 20px
-            vip-square(15px, red)
-            z-index: 10
-            .vip
-              margin: auto
-              margin-left: 15px
-              font-size: 18px
-              font-weight: bold
-              color: yellow
-          .avatar
-            position: absolute
-            display: flex
-            width: 84px
-            height: 84px
-            top: 8px
-            left: 8px
-            z-index: 9
-            bevel-square(5px, #000)
-            .virid-bevel
-              display: flex
-              width: 75px
-              height: 75px
-              margin: auto
-              bevel-square(4px, $color-virid)
-              .black-bevel
-                display: flex
-                width: 72px
-                height: 72px
-                margin: auto
-                bevel-square(4px, #000)
-                .avatar-img
-                  position: relative
-                  width: 90%
-                  height: 90%
-                  top: 7px
-                  left: 4px
-        .name-box
+      .activities
+        .activity
+          width: 80px
+          height: 80px
+      .message
+        position: absolute
+        width: 100%
+        height: 80%
+        top: 10%
+        z-index: 10
+        transition: all 0.3s
+        .msg-box
           position: absolute
-          display: flex
-          vertical-align: top
-          top: 10px
-          left: 95px
-          width: 240px
-          height: 60px
-          right-arrow(10px, #aaa)
-          z-index: 1
-          .black-right-arrow
-            display: flex
-            margin: auto
-            width: 240px
-            height: 55px
-            right-arrow(10px, #000)
-          &:before
+          width: 80%
+          height: 100%
+          background: #ccc
+        .img-box
+          position: absolute
+          z-index: 9
+          .not-read-msg
             position: absolute
-            content: ''
-            width: 8px
-            height: 50px
-            left: 18px
-            transform: rotate(25deg)
-            background: #3366CC
-          &:after
-            position: absolute
-            content: ''
-            width: 120px
-            height: 10px
-            left: -5px
-            vip-square(10px, #ddd)
-          .name-right-arrow
-            display: flex
-            margin: auto  
-            width: 235px
-            height: 50px
-            right-arrow(10px, $color-nickname-bg)
+            display: inline-block
+            background: red
+            font-size: 20px
+            font-weight: bold
+            border-radius: 50%
+            padding: 10px
             color: #FFF
-            &:before
-              position: absolute
-              content: ''
-              width: 30px
-              height: 2px
-              top: 20px
-              right: 0
-              background: linear-gradient(135deg, transparent 5px, #222 0) top left
-              transform: rotate(45deg)
-            &:after
-              position: absolute
-              content: ''
-              width: 30px
-              height: 3px
-              top: 38px
-              right: 1px
-              background: linear-gradient(45deg, transparent 5px, #222 0) bottom left
-              transform: rotate(-45deg)
-            .name
-              display: flex
-              width: 80%
-              height: 80%
-              font-size: 18px
-              margin: auto
-              .nickname
-                display: inline-block
-                margin: auto
-                font-size: 20px
-              &:before
-                position: absolute
-                content: ''
-                width: 150px
-                height: 3px
-                bottom: 8px
-                left: 0
-                background: linear-gradient(to right, $color-virid, $color-nickname-bg)
-              .level
-                display: inline-block
-                margin: auto
-                border: 2px solid $color-virid
-                border-radius: 5px
-                padding: 5px 2px
+            z-index: 10
+          .msg-off
+            position: relative
+          .msg-on
+            position: relative
+      .role
+        position: absolute
+        bottom: 0
+        left: 0
+        width: 130px
     .right-container
       position: absolute
       top: 0
       right: 0
       width: 60%
       height: 100%
+      .money-box
+        position: relative
+        width: 100%
+        height: 80px
+        .gold
+          position: absolute
+          display: inline-block
+          top: 0
+          right: 240px
+          text-align: right
+          .gold-num
+            position: absolute
+            display: inline-block
+            color: #FFF
+            right: 90px
+            top: 27px
+            font-size: 18px
+          img
+            vertical-align: top
+        .diamond
+          position: absolute
+          display: inline-block
+          right: 0
+          top: 0
+          text-align: right
+          .diamond-num
+            position: absolute
+            display: inline-block
+            color: #FFF
+            right: 90px
+            top: 27px
+            font-size: 18px
+          img
+            vertical-align: top
+      .function-1-box
+        position: relative
+        right: 20px
+        top: -30px
+        text-align: right
+        .mission
+          display: inline-block
+          width: 70px
+          height: 70px
+        .all-card
+          display: inline-block
+          margin-left: -10px
+          width: 70px
+          height: 70px
+        .rank
+          display: inline-block
+          margin-left: -10px
+          width: 70px
+          height: 70px
+        .email
+          display: inline-block
+          margin-left: -10px
+          width: 70px
+          height: 70px
+        .sign-in
+          display: inline-block
+          margin-left: -10px
+          width: 70px
+          height: 70px
+      .function-2-box
+        position: relative
+        width: 100%
+        height: 100%
+        top: -40px
+        .my-card
+          position: absolute
+          display: inline-block
+          width: 140px
+          left: 47%
+        .shop
+          position: absolute
+          display: inline-block
+          width: 140px
+          left: 80%
+        .fight
+          position: absolute
+          display: inline-block
+          width: 200px
+          left: 60%
+          top: 7%
+        .store
+          position: absolute
+          display: inline-block
+          width: 140px
+          left: 47%
+          top: 24%
+        .skin-shop
+          position: absolute
+          display: inline-block
+          width: 140px
+          left: 64%
+          top: 37%
+        .team
+          position: absolute
+          display: inline-block
+          width: 140px
+          left: 81%
+          top: 24%
+      .function-3-box
+        position: absolute
+        width: 100%
+        height: 140px
+        bottom: 0
+        .travel
+          position: absolute
+          width: 130px
+          top: 0
+          right: 20px
 </style>
