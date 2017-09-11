@@ -325,7 +325,6 @@
         height: 70px
         margin-bottom: 10px
         z-index: 1000
-        background: red
         .gold
           position: absolute
           display: inline-block
