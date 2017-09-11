@@ -120,7 +120,7 @@
       <div class="gift-change">
         <div class="v-button">礼包兑换</div>
       </div>
-      <div class="close-button">x</div>
+      <div class="close-button" @click="onDownPlayerInfo">x</div>
     </div>
   </div>
 </template>
