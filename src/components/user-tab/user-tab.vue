@@ -332,7 +332,7 @@
           right: 240px
           height: 70px
           text-align: right
-          line-height: 0
+          font-size: 0
           .gold-num
             position: absolute
             display: inline-block
@@ -349,7 +349,7 @@
           top: 0
           height: 100%
           text-align: right
-          line-height: 0
+          font-size: 0
           .diamond-num
             position: absolute
             display: inline-block
