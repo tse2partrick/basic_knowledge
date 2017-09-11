@@ -4,7 +4,7 @@
     <player-background :bg="bg"></player-background>
     <player-char :char="char"></player-char>
     <div class="left-container">
-      <player-info class="playerInfo" :name="playerName" :level="playerLevel" :vip-level="vipLevel" />
+      <player-info class="playerInfo" :name="playerName" :level="playerLevel" :vip-level="vipLevel" @openPlayerInfo="onOpenPlayerInfo" />
       <div class="activities">
         <div class="activity">
           <img width="100%" height="100%" src="~assets/treasures/treasure1.gif" alt="">
@@ -19,18 +19,18 @@
         </div>
       </div>
       <div class="role">
-        <img width="100%" height="100%" src="~assets/routers/role12.png" alt="" />
+        <img width="100%" height="100%" src="~assets/routers/role1.png" alt="" />
       </div>
     </div>
     <div class="right-container">
       <div class="money-box">
         <div class="gold" ref="gold">
           <div class="gold-num">{{serialize(gold)}}</div>
-          <img width="70%" height="70%" src="~assets/money/gold.png" alt="" />
+          <img width="70%" height="100%" src="~assets/money/gold.png" alt="" />
         </div>
         <div class="diamond" ref="diamond">
           <div class="diamond-num">{{serialize(diamond)}}</div>
-          <img width="70%" height="70%" src="~assets/money/diamond.png" alt="" />
+          <img width="70%" height="100%" src="~assets/money/diamond.png" alt="" />
         </div>
       </div>
       <div class="function-1-box">
@@ -76,6 +76,52 @@
         </div>
       </div>
     </div>
+    <div class="filterMode" v-show="playerInfoOpen" @click="onDownPlayerInfo">
+    </div>
+    <div class="menu" ref="menu">
+      <div class="role-setting">
+        <div class="player-info">
+          <PlayerInfo class="menu-player-info" :name="playerName" :level="playerLevel" :vip-level="vipLevel" />
+          <div class="id">
+            <span>ID</span>{{id}}
+          </div>
+          <div class="v-button">VIP 特权</div>
+        </div>
+        <div class="role-info">
+          <div class="role-name">武藤游戏</div>
+          <div class="level-box">
+            <div class="level">{{playerLevel}}</div>
+            <div class="exp-box">
+              <div class="exp" ref="exp"></div>
+              <div class="exp-num">{{gotExp}}/{{nextExp}}</div>
+            </div>
+          </div>
+          <div class="basic-setting">
+            <div class="change-button nickname">修改昵称</div>
+            <div class="change-button avatar">修改头像</div>
+            <div class="change-button avatar-box">修改头像框</div>
+            <div class="change-button card-behind">修改卡背</div>
+          </div>
+        </div>
+      </div>
+      <div class="game-setting">
+        <div class="music-box">
+          <span class="">音乐</span>
+          <div class="change-button voice">{{voiceOpen ? '开' : '关'}}</div>
+          <span>音效</span>
+          <div class="change-button music">{{musicOpen ? '开' : '关'}}</div>
+        </div>
+        <div class="change-button help">帮助</div>
+        <div class="change-server">
+          <span class="server-name">{{server}}</span>
+          <div class="change-button">切换服务器</div>
+        </div>
+      </div>
+      <div class="gift-change">
+        <div class="v-button">礼包兑换</div>
+      </div>
+      <div class="close-button">x</div>
+    </div>
   </div>
 </template>
 
@@ -97,7 +143,14 @@
         playerLevel: 100,
         vipLevel: 1,
         gold: 299999,
-        diamond: 299999
+        diamond: 299999,
+        playerInfoOpen: false,
+        voiceOpen: true,
+        musicOpen: true,
+        id: 65536,
+        gotExp: 3000,
+        nextExp: 5000,
+        server: '173区 光影刺客'
       }
     },
     mounted() {
@@ -173,6 +226,18 @@
 
         return ret
       },
+      onOpenPlayerInfo() {
+        this.playerInfoOpen = true
+        this.$refs.menu.style.animation = 'menuOpen 0.7s forwards'
+        this.$refs.exp.style.width = this.gotExp / this.nextExp * 100 + '%'
+      },
+      onDownPlayerInfo() {
+        this.playerInfoOpen = false
+        this.$refs.menu.style.animation = 'menuDown 0.7s forwards'
+      },
+      clickOnMenu() {
+
+      },
       _initMsgPos() {
         this.$refs.message.style.transform = `translate3d(-${this.$refs.msgBox.clientWidth}px, 0, 0)`
         this.$refs.imgBox.style.left = this.$refs.msgBox.clientWidth + 'px'
@@ -207,6 +272,9 @@
       left: 0
       width: 40%
       height: 100%
+      .playerInfo
+        position: relative
+        z-index: 11
       .activities
         .activity
           width: 80px
@@ -216,7 +284,7 @@
         width: 100%
         height: 80%
         top: 10%
-        z-index: 10
+        z-index: 9
         transition: all 0.3s
         .msg-box
           position: absolute
@@ -254,13 +322,18 @@
       .money-box
         position: relative
         width: 100%
-        height: 80px
+        height: 70px
+        margin-bottom: 10px
+        z-index: 1000
+        background: red
         .gold
           position: absolute
           display: inline-block
           top: 0
           right: 240px
+          height: 70px
           text-align: right
+          line-height: 0
           .gold-num
             position: absolute
             display: inline-block
@@ -275,7 +348,9 @@
           display: inline-block
           right: 0
           top: 0
+          height: 100%
           text-align: right
+          line-height: 0
           .diamond-num
             position: absolute
             display: inline-block
@@ -363,4 +438,149 @@
           width: 130px
           top: 0
           right: 20px
+    .filterMode
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      background: rgba(33, 33, 33, 0.7)
+      z-index: 100
+      transition: 0.3s
+    .menu
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translateX(-50%) translateY(-50%) translate3d(0, 150%, 0)
+      width: 80%
+      height: 70%
+      background: $color-board
+      transition: 0.3s
+      z-index: 101
+      font-size: 18px
+      border-radius: 5px
+      padding: 10px
+      color: #FFF
+      .role-setting
+        padding-bottom: 20px
+        border-bottom: 1px solid #222
+        .player-info
+          .menu-player-info
+            transform: scale(1)
+          .id
+            position: absolute
+            display: inline-block
+            left: 50%
+            top: 35px
+            font-size: 20px
+            span
+              color: #ffb503
+              margin-right: 5px
+          .v-button
+            v-button()
+            position: absolute
+            width: 100px
+            right: 30px
+            top: 35px
+            &:hover
+              color: red
+              background: yellow
+        .role-info
+          margin-top: 50px
+          margin-left: 10px
+          margin-right: 10px
+          .role-name
+            display: inline-block
+            margin-right: 30px
+          .level-box
+            display: inline-block
+            .level
+              display: inline-block
+              border: 1px solid blue
+            .exp-box
+              position: relative
+              display: inline-block
+              border: 1px solid #ccc
+              width: 200px
+              text-align: center
+              .exp
+                position: absolute
+                display: inline-block
+                color: green
+                top: 0
+                left: 0
+                height: 100%
+                background: blue
+                z-index: 9
+              .exp-num
+                position: relative
+                display: inline-block
+                z-index: 10
+          .basic-setting
+            display: inline-block
+            margin-left: 5px
+            .change-button
+              change-button()
+              width: 100px
+              &:hover
+                color: green
+                background: #FFF
+      .game-setting
+        border-top: 1px solid #ccc
+        border-bottom: 1px solid #222
+        padding: 0 10px
+        padding-bottom: 30px
+        .music-box
+          display: inline-block
+          margin-top: 20px
+          span
+            color: orange
+          .change-button
+            change-button()
+            width: 50px
+            &:hover
+              color: green
+              background: #FFF
+        .help
+          change-button()
+          width: 100px
+          margin-left: 152px
+          &:hover
+              color: green
+              background: #FFF
+        .change-server
+          margin-top: 20px
+          span
+            font-size: 14px
+          .change-button
+            change-button()
+            width: 130px
+            margin-top: 20px
+            &:hover
+              color: green
+              background: #FFF
+      .gift-change
+        position: relative
+        border-top: 1px solid #ccc
+        text-align: right
+        .v-button
+          v-button()
+          width: 100px
+          margin: 30px 30px 0 0
+          &:hover
+            color: red
+            background: yellow
+      .close-button
+        close-button()
+        &:hover
+          color: red
+          background: #FFF
+  @keyframes menuOpen
+    0% {transform: translate3d(-50%, 150%, 0)}
+    60% {transform: translate3d(-50%, -70%, 0)}
+    100% {transform: translate3d(-50%, -50%, 0)}
+  @keyframes menuDown
+    0% {transform: translate3d(-50%, -50%, 0)}
+    40% {transform: translate3d(-50%, -70%, 0)}
+    100% {transform: translate3d(-50%, 150%, 0)}
 </style>

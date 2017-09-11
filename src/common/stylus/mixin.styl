@@ -52,3 +52,41 @@ right-arrow($px, $color)
               linear-gradient(-45deg, transparent $px + 15px, $color 0) bottom right;
   background-size: 50% 50%;
   background-repeat: no-repeat;
+
+// vip button
+v-button()
+  display: inline-block
+  background: red
+  color: yellow
+  border-radius: 5px
+  padding: 5px 3px
+  text-align: center
+  font-weight: bold
+  cursor: pointer
+  transition: all 0.3s
+
+// change button
+change-button()
+  display: inline-block
+  background: $color-c-button
+  color: #FFF
+  border-radius: 5px
+  padding: 5px 3px
+  text-align: center
+  cursor: pointer
+  font-weight: bold
+  transition: all 0.3s
+
+close-button()
+  position: absolute
+  display: inline-block
+  width: 50px
+  height: 30px
+  color: #FFF
+  background: red
+  text-align: center
+  font-size: 30px
+  font-weight: bold
+  top: 0
+  right: 0
+  cursor: pointer

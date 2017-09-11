@@ -1,6 +1,6 @@
 <template>
   <div class="player-info">
-    <div class="avatar-box">
+    <div class="avatar-box" @click="openPlayerInfo">
       <div class="vip-box" v-show="vipLevel >= 1">
         <span class="vip">VIP&nbsp;{{vipLevel}}</span>
       </div>
@@ -39,6 +39,11 @@
       vipLevel: {
         type: Number,
         default: 0
+      }
+    },
+    methods: {
+      openPlayerInfo() {
+        this.$emit('openPlayerInfo')
       }
     }
   }
