@@ -5,9 +5,9 @@
     <player-char :char="char"></player-char>
     <div class="left-container">
       <player-info class="playerInfo" :name="playerName" :level="playerLevel" :vip-level="vipLevel" @openPlayerInfo="onOpenPlayerInfo" />
-      <div class="activities">
+      <div class="activities" ref="activities">
         <div class="activity">
-          <img width="100%" height="100%" src="~assets/treasures/treasure1.gif" alt="">
+          <img width="100%" height="100%" src="~assets/treasures/treasure1.gif" alt="" @click="onActivitiesOpen">
         </div>
       </div>
       <div class="message" ref="message">
@@ -18,8 +18,8 @@
           <img class="msg-on" v-show="msgOpen" src="~assets/routers/message-out.png" alt="" @click="toggleMsg" />  
         </div>
       </div>
-      <div class="role">
-        <img width="100%" height="100%" src="~assets/routers/role1.png" alt="" />
+      <div class="role" ref="role">
+        <img width="100%" height="100%" src="~assets/routers/role1.png" alt="" @click="onRolesOpen" />
       </div>
     </div>
     <div class="right-container">
@@ -208,8 +208,14 @@
 
         if (this.msgOpen) {
           this.$refs.message.style.transform = 'translate3d(0, 0, 0)'
+          this.$refs.activities.style.zIndex = 1
+          this.$refs.role.style.zIndex = 1
         } else {
           this.$refs.message.style.transform = `translate3d(-${this.$refs.msgBox.clientWidth}px, 0, 0)`
+          setTimeout(() => {
+            this.$refs.activities.style.zIndex = 10
+            this.$refs.role.style.zIndex = 10
+          }, 300)
         }
       },
       serialize(num) {
@@ -237,6 +243,16 @@
       },
       clickOnMenu() {
 
+      },
+      onActivitiesOpen() {
+        this.$router.push({
+          path: '/activities'
+        })
+      },
+      onRolesOpen() {
+        this.$router.push({
+          path: '/roles'
+        })
       },
       _initMsgPos() {
         this.$refs.message.style.transform = `translate3d(-${this.$refs.msgBox.clientWidth}px, 0, 0)`
@@ -276,9 +292,13 @@
         position: relative
         z-index: 11
       .activities
+        position: relative
+        z-index: 10
         .activity
           width: 80px
           height: 80px
+          img
+            cursor: pointer
       .message
         position: absolute
         width: 100%
@@ -293,7 +313,6 @@
           background: #ccc
         .img-box
           position: absolute
-          z-index: 9
           .not-read-msg
             position: absolute
             display: inline-block
@@ -313,6 +332,9 @@
         bottom: 0
         left: 0
         width: 130px
+        z-index: 10
+        img
+          cursor: pointer
     .right-container
       position: absolute
       top: 0
@@ -574,6 +596,8 @@
         &:hover
           color: red
           background: #FFF
+  img
+    cursor: pointer
   @keyframes menuOpen
     0% {transform: translate3d(-50%, 150%, 0)}
     60% {transform: translate3d(-50%, -70%, 0)}
