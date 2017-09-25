@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="function-2-box">
-        <div class="my-card">
+        <div class="my-card" @click="goMyCard">
           <img src="~assets/routers/my-card.png" width="100%" height="100%" alt="" />
         </div>
         <div class="shop">
@@ -131,6 +131,7 @@
   import PlayerChar from 'base/player-char/player-char'
   import PlayerInfo from 'base/player-info/player-info'
 
+  import jsonp from 'common/js/jsonp'
   export default {
     data() {
       return {
@@ -155,14 +156,17 @@
     },
     mounted() {
       this.resizePage()
-      window.addEventListener('resize', this.resizePage)
+      // window.addEventListener('resize', this.resizePage)
       setTimeout(() => {
         this._initMsgPos()
         this._initMoneyPos()
       }, 20)
+
+      let d = jsonp('http://localhost:8081')
+      console.log(d)
     },
     destroyed() {
-      window.removeEventListener('resize', this.resizePage)
+      // window.removeEventListener('resize', this.resizePage)
     },
     methods: {
       resizePage() {
@@ -252,6 +256,11 @@
       onRolesOpen() {
         this.$router.push({
           path: '/roles'
+        })
+      },
+      goMyCard() {
+        this.$router.push({
+          path: '/my-card'
         })
       },
       _initMsgPos() {

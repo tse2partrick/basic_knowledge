@@ -4,6 +4,7 @@ import UserTab from 'components/user-tab/user-tab'
 import Activities from 'components/activities/activities'
 import Roles from 'components/roles/roles'
 import Test from 'components/test/test'
+import MyCard from 'components/my-card/my-card'
 Vue.use(Router)
 
 export default new Router({
@@ -27,6 +28,10 @@ export default new Router({
     {
       path: '/test',
       component: Test
+    },
+    {
+      path: '/my-card',
+      component: MyCard
     }
   ]
 })
